@@ -1,54 +1,71 @@
-from datetime import datetime
-import numpy as np
-import matplotlib.pyplot as plt
-import pygame
-import os
+import datetime
 
 class BirthdateValidator:
-    DTMF_FREQS = {
-        '1': 1209,
-        '2': 1336,
-        '3': 1477,
-        '4': 1209,
-        '5': 1336,
-        '6': 1477,
-        '7': 1209,
-        '8': 1336,
-        '9': 1477,
-        '0': 1336
-    }
+    def __init__(self, min_year=1899, max_year=2032):
+        self.min_year = min_year
+        self.max_year = max_year
 
-    def __init__(self, audio_dir="audio/errors/"):
-        self.audio_dir = audio_dir
-        pygame.mixer.init()
+    def validate(self, user_input):
+        standard_input = user_input.replace('.', '/') # Replace '.' with '/'
 
-    def play_error_sound(self):
-        error_file = os.path.join(self.audio_dir, "error.wav")
-        if os.path.exists(error_file):
-            pygame.mixer.music.load(error_file)
-            pygame.mixer.music.play()
+        if '/' in standard_input: # Check if there are separators in standard_input
+            parts = standard_input.split('/') # Split the input in parts by the '/' separator
+            if len(parts) != 3:
+                print("Please, enter a valid birthdate")
+                return False
+            try: # Convert each part into an integer an assign them to day, month and year variables
+                day = int(parts[0])
+                month = int(parts[1])
+                year = int(parts[2])
+            except ValueError: # Check if any part contains a non-digit character, raise an exception
+                print("Access Denied. Numbers Only")
+                return False
+        else: # if there are not separators, create a digits list containing a character for each of the characters in standard input that is a digit
+            digits = [c for c in standard_input if c.isdigit()]
+            if len(digits) != 8:
+                print("Access Denied. Numbers Only")
+                return False
+            day = int(''.join(digits[0:2])) # Join digits 1-2 (index 0 and 1) from the digits list to an empty string to convert it into integer "day"
+            month = int(''.join(digits[2:4])) # Join digits 3-4 (index 2 and 3) from the digits list to an empty string to convert it into integer "month"
+            year = int(''.join(digits[4:8])) # Join digits 5-8 (index 4 to 7) from the digits list to an empty string to convert it into integer "year"
 
-    def play_dtmf_tone(self, digit: str, duration=0.5):
-        if digit not in self.DTMF_FREQS:
-            self.play_error_sound()
-            return
+        """Validate year"""
 
-        fs = 44100  # Sampling rate
-        t = np.linspace(0, duration, int(fs * duration), endpoint=False)
-        freq = self.DTMF_FREQS[digit]
-        wave = np.sin(2 * np.pi * freq * t)
+        if not (self.min_year <= year <= self.max_year): # Check if year is not equal or greater than minimum (1899) or equal or less than maximum (2032)
+            print("Please, enter a valid birthdate")
+            return False
 
-        plt.plot(t, wave)
-        plt.title(f"DTMF Tone: {digit}")
-        plt.show()
+        """Validate month"""
 
-    def validate_birthdate(self, birthdate_str: str) -> str:
+        if not (1 <= month <= 12): # Check if month isn't equal or greater than 1 or equal or less than 12
+            print("Please, enter a valid birthdate")
+            return False
+
+        """Days per month"""
+
+        if month == 2: # Check if month is February
+            is_leap = (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) # If year is divisible by 4 and not by 100, unless it is divisible by 400
+            max_day = 29 if is_leap else 28 # 29 days if it is a leap year, otherwise 28
+        elif month in [4, 6, 9, 11]: # Check if month is April, June, September or November
+            max_day = 30 # 30 days
+        else: # Check if month is January, March, May, July, August, October or December
+            max_day = 31 # 31 days
+
+        if not (1 <= day <= max_day):
+            print("Please, enter a valid birthdate")
+            return False
+
         try:
-            parsed = datetime.strptime(birthdate_str, "%d/%m/%Y")
+            date = datetime.date(year, month, day) # Validate date using datetime
         except ValueError:
-            return "denied_non_numeric"
+            print("Access Denied. Invalid Date")
+            return False
 
-        threshold = datetime.strptime("01/01/2032", "%d/%m/%Y")
-        if parsed > threshold:
-            return "denied_adult"
-        return "granted"
+        if date >= datetime.date(2032, 1, 1): # Check if date is before 01/01/2032
+            print("Access Denied. Adults Only")
+            return False
+
+        print("Access Granted. Well Done")
+        return True
+
+    print("Welcome Participant")
