@@ -1,6 +1,7 @@
 import datetime
 
 class BirthdateValidator:
+
     def __init__(self, min_year=1899, max_year=2032):
         self.min_year = min_year
         self.max_year = max_year
@@ -67,5 +68,3 @@ class BirthdateValidator:
 
         print("Access Granted. Well Done")
         return True
-
-    print("Welcome Participant")

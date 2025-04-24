@@ -5,10 +5,13 @@ from modules.birthdate_validator import BirthdateValidator
 
 def main():
     # Setup
-    validator = BirthdateValidator()
     state = StateManager()
+    validator = BirthdateValidator()
     face_auth = FaceAuthenticator()
-    prompter = AudioPrompter(audio_dir="audio/")
+    prompter = AudioPrompter()
+
+    # Step 1: Welcome
+    prompter.speak("Welcome Participant", "welcome.mp3")
 
     # Step 1: Face Detection
     # face_detected = face_auth.detect_face(timeout=10, debug=True, debug_duration=5)
@@ -22,14 +25,12 @@ def main():
     #     face_auth.release()
     #     return
 
-
-
     # Step 3: Play DTMF tones or error sound
     # for char in birthdate:
     #     validator.play_dtmf_tone(char)
 
     # Step 2: Ask for Birthdate
-    # prompter.speak("Please enter your birth date (rdd/mm/yyyy):", "please_enter_birthdate.wav")
+    # prompter.speak("Please enter your birthdate (rdd/mm/yyyy):", "please_enter_birthdate.wav")
     while True:
         birthdate = input("Please, enter your birthdate (DD/MM/YYYY): ")
         print(f"You entered: {birthdate}")

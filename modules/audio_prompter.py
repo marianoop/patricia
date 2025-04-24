@@ -1,21 +1,36 @@
 import os
-import pygame
+import sounddevice as sd
+import soundfile as sf
 
+"""
+A class to manage audio prompts and playback using Sounddevice.
+"""
 class AudioPrompter:
-    def __init__(self, audio_dir="audio/"):
+
+    def __init__(self, audio_dir="resources/audio/"):
         self.audio_dir = audio_dir
-        pygame.mixer.init()
 
-    def play(self, filename: str):
-        """Play an audio file from the audio directory."""
-        path = os.path.join(self.audio_dir, filename)
-        if not os.path.exists(path):
+    def play(self, filename):
+        path = os.path.join(self.audio_dir, filename) # Construct the full file path
+
+        if not os.path.exists(path): # Check if the audio file exists
             print(f"[AudioPrompter] File not found: {path}")
-            return
-        pygame.mixer.music.load(path)
-        pygame.mixer.music.play()
+            return False
 
-    def speak(self, message: str, audio_file: str):
-        """Print the message and play the corresponding audio."""
+        try:
+            data, samplerate = sf.read(path) # Load the audio data and sample rate
+
+            sd.play(data, samplerate) # Play the audio
+            sd.wait()  # Wait for the playback to complete
+
+            return True
+
+        except Exception as e:
+            print(f"[AudioPrompter] Error playing file {filename}: {e}")
+            return False
+
+    def speak(self, message, audio_file):
         print(f"[Patricia] {message}")
-        self.play(audio_file)
+        success = self.play(audio_file)
+        if not success:
+            print("[AudioPrompter] Failed to play audio.")
