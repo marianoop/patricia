@@ -10,7 +10,7 @@ class AudioPrompter:
     def __init__(self, audio_dir="resources/audio/"):
         self.audio_dir = audio_dir
 
-    def play(self, filename):
+    def play_audio(self, filename):
         path = os.path.join(self.audio_dir, filename) # Construct the full file path
 
         if not os.path.exists(path): # Check if the audio file exists
@@ -29,8 +29,8 @@ class AudioPrompter:
             print(f"[AudioPrompter] Error playing file {filename}: {e}")
             return False
 
-    def speak(self, message, audio_file):
+    def speak_and_play(self, message, audio_file):
         print(f"[Patricia] {message}")
-        success = self.play(audio_file)
+        success = self.play_audio(audio_file)
         if not success:
             print("[AudioPrompter] Failed to play audio.")

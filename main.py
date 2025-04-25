@@ -11,7 +11,7 @@ def main():
     prompter = AudioPrompter()
 
     # Step 1: Welcome
-    prompter.speak("Welcome Participant", "welcome.mp3")
+    # prompter.speak_and_play("Welcome Participant", "welcome.mp3")
 
     # Step 1: Face Detection
     # face_detected = face_auth.detect_face(timeout=10, debug=True, debug_duration=5)

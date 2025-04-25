@@ -1,10 +1,22 @@
 import datetime
+from modules.tone_player import TonePlayer
 
 class BirthdateValidator:
 
     def __init__(self, min_year=1899, max_year=2032):
         self.min_year = min_year
         self.max_year = max_year
+        self.player = TonePlayer()
+
+    def _handle_error(self, message):
+        print(message)
+        self.player.play_error_tone()
+        return False
+
+    def _handle_valid(self, message):
+        print(message)
+        self.player.play_valid_tone()
+        return True
 
     def validate(self, user_input):
         standard_input = user_input.replace('.', '/') # Replace '.' with '/'
@@ -12,20 +24,17 @@ class BirthdateValidator:
         if '/' in standard_input: # Check if there are separators in standard_input
             parts = standard_input.split('/') # Split the input in parts by the '/' separator
             if len(parts) != 3:
-                print("Please, enter a valid birthdate")
-                return False
+                return self._handle_error("Please, enter a valid birthdate")
             try: # Convert each part into an integer an assign them to day, month and year variables
                 day = int(parts[0])
                 month = int(parts[1])
                 year = int(parts[2])
             except ValueError: # Check if any part contains a non-digit character, raise an exception
-                print("Access Denied. Numbers Only")
-                return False
+                return self._handle_error("Access Denied. Numbers Only")
         else: # if there are not separators, create a digits list containing a character for each of the characters in standard input that is a digit
             digits = [c for c in standard_input if c.isdigit()]
             if len(digits) != 8:
-                print("Access Denied. Numbers Only")
-                return False
+                return self._handle_error("Access Denied. Numbers Only")
             day = int(''.join(digits[0:2])) # Join digits 1-2 (index 0 and 1) from the digits list to an empty string to convert it into integer "day"
             month = int(''.join(digits[2:4])) # Join digits 3-4 (index 2 and 3) from the digits list to an empty string to convert it into integer "month"
             year = int(''.join(digits[4:8])) # Join digits 5-8 (index 4 to 7) from the digits list to an empty string to convert it into integer "year"
@@ -33,14 +42,12 @@ class BirthdateValidator:
         """Validate year"""
 
         if not (self.min_year <= year <= self.max_year): # Check if year is not equal or greater than minimum (1899) or equal or less than maximum (2032)
-            print("Please, enter a valid birthdate")
-            return False
+            return self._handle_error("Please, enter a valid birthdate")
 
         """Validate month"""
 
         if not (1 <= month <= 12): # Check if month isn't equal or greater than 1 or equal or less than 12
-            print("Please, enter a valid birthdate")
-            return False
+            return self._handle_error("Please, enter a valid birthdate")
 
         """Days per month"""
 
@@ -53,18 +60,14 @@ class BirthdateValidator:
             max_day = 31 # 31 days
 
         if not (1 <= day <= max_day):
-            print("Please, enter a valid birthdate")
-            return False
+            return self._handle_error("Please, enter a valid birthdate")
 
         try:
             date = datetime.date(year, month, day) # Validate date using datetime
         except ValueError:
-            print("Access Denied. Invalid Date")
-            return False
+            return self._handle_error("Access Denied. Invalid Date")
 
         if date >= datetime.date(2032, 1, 1): # Check if date is before 01/01/2032
-            print("Access Denied. Adults Only")
-            return False
+            return self._handle_error("Access Denied. Adults Only")
 
-        print("Access Granted. Well Done")
-        return True
+        return self._handle_valid("Access Granted. Well Done")
