@@ -19,8 +19,8 @@ class TonePlayer:
 
     def play_error_tone(self):
         inharmonic_interval = 8/5
-        sixth_above = self._get_interval(inharmonic_interval) # Inharmonic interval
-        sound = self._gen_sine_with_sidebands(1.0, 1.0, self.base_frequency, sixth_above)
+        minor_six_above = self._get_interval(inharmonic_interval) # Inharmonic interval
+        sound = self._gen_sine_with_sidebands(1.0, 1.0, self.base_frequency, minor_six_above)
         self._play_sound(sound)
 
     def _gen_sine(self, amplitude, frequency):

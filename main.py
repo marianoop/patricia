@@ -1,33 +1,24 @@
 from modules.state_manager import StateManager
-from modules.face_authenticator import FaceAuthenticator
-from modules.audio_prompter import AudioPrompter
+from modules.face_detector import FaceDetector
+from modules.audio_prompter import AudioPlayer
 from modules.birthdate_validator import BirthdateValidator
 
 def main():
+
     # Setup
     state = StateManager()
+    face_detector = FaceDetector(preview=False) # Pass preview=True by argument if debbuging is needed
     validator = BirthdateValidator()
-    face_auth = FaceAuthenticator()
-    prompter = AudioPrompter()
-
-    # Step 1: Welcome
-    # prompter.speak_and_play("Welcome Participant", "welcome.mp3")
+    prompter = AudioPlayer()
 
     # Step 1: Face Detection
-    # face_detected = face_auth.detect_face(timeout=10, debug=True, debug_duration=5)
-    #
-    # print("Please position yourself in front of the camera...")
-    # if face_detected:
-    #     state.face_detected = True
-    #     prompter.speak("Welcome participant.", "welcome_participant.wav")
-    # else:
-    #     print("No face detected. Exiting.")
-    #     face_auth.release()
-    #     return
-
-    # Step 3: Play DTMF tones or error sound
-    # for char in birthdate:
-    #     validator.play_dtmf_tone(char)
+    print("Please position yourself in front of the camera...")
+    if face_detector.detect():
+        state.face_detected = True
+        prompter.play_and_speak("Access granted. Welcome Participant", "welcome.mp3") # Send welcome message
+    else:
+        print("Access denied")
+        return
 
     # Step 2: Ask for Birthdate
     # prompter.speak("Please enter your birthdate (rdd/mm/yyyy):", "please_enter_birthdate.wav")
@@ -50,7 +41,6 @@ def main():
     #     prompter.speak("Access Denied: Numbers Only", "access_denied_numbers_only.wav")
     #     return
 
-    face_auth.release()
 
 if __name__ == "__main__":
     main()

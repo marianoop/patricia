@@ -5,16 +5,15 @@ import soundfile as sf
 """
 A class to manage audio prompts and playback using Sounddevice.
 """
-class AudioPrompter:
-
+class AudioPlayer:
     def __init__(self, audio_dir="resources/audio/"):
         self.audio_dir = audio_dir
 
-    def play_audio(self, filename):
+    def play(self, filename):
         path = os.path.join(self.audio_dir, filename) # Construct the full file path
 
         if not os.path.exists(path): # Check if the audio file exists
-            print(f"[AudioPrompter] File not found: {path}")
+            print(f"[AudioPlayer] File not found: {path}")
             return False
 
         try:
@@ -26,11 +25,11 @@ class AudioPrompter:
             return True
 
         except Exception as e:
-            print(f"[AudioPrompter] Error playing file {filename}: {e}")
+            print(f"[AudioPlayer] Error playing file {filename}: {e}")
             return False
 
-    def speak_and_play(self, message, audio_file):
+    def play_and_speak(self, message, audio_file):
         print(f"[Patricia] {message}")
-        success = self.play_audio(audio_file)
+        success = self.play(audio_file)
         if not success:
-            print("[AudioPrompter] Failed to play audio.")
+            print("[AudioPlayer] Failed to play audio.")
