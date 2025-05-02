@@ -8,9 +8,9 @@ from modules.swipe_detector import SwipeDetector
 def main():
     # Setup
     state = StateManager()
-    face_detector = FaceDetector(preview=False) # Pass preview=True by argument if debbuging is needed
+    face_detector = FaceDetector() # Pass preview=True by argument if debbuging is needed
     validator = BirthdateValidator()
-    swipe_detector = SwipeDetector()
+    swipe_detector = SwipeDetector() # Pass preview=True by argument if debbuging is needed
     prompter = AudioPlayer()
 
     # Step 1: Face Detection

@@ -7,7 +7,8 @@ import math
 A  cass for detecting left-to-right hand swipes.
 """
 class SwipeDetector:
-    def __init__(self, validation_time=30.0, min_displacement=800):
+    def __init__(self, preview=False, validation_time=30.0, min_displacement=800):
+        self.preview = preview
         self.validation_time = validation_time
         self.min_displacement = min_displacement
         self.position_history = deque()
@@ -82,9 +83,11 @@ class SwipeDetector:
                         self.y_position_history.clear()
 
                 prev_gray = gray.copy()
-                cv2.imshow("Hand Swipe Detection", frame)
-                if cv2.waitKey(10) & 0xFF == ord('q'):
-                    break
+                if self.preview:
+                    cv2.imshow("Hand Swipe Detection", frame)
+                    if cv2.waitKey(10) & 0xFF == ord('q'):
+                        break
         finally:
             cap.release()
-            cv2.destroyAllWindows()
+            if self.preview:
+                cv2.destroyAllWindows()
