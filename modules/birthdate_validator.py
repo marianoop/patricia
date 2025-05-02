@@ -1,6 +1,9 @@
 import datetime
 from modules.tone_player import TonePlayer
 
+"""
+A  class for validating birthdates using datetime and customized tones.
+"""
 class BirthdateValidator:
     def __init__(self, min_year=1899, max_year=2032):
         self.min_year = min_year
