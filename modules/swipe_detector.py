@@ -7,7 +7,7 @@ import math
 A  calss for detecting left-to-right hand swipes.
 """
 class SwipeDetector:
-    def __init__(self, preview=True, validation_time=30.0, min_displacement=800):
+    def __init__(self, preview=False, validation_time=30.0, min_displacement=800):
         self.preview = preview
         self.validation_time = validation_time
         self.min_displacement = min_displacement
