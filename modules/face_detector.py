@@ -5,7 +5,7 @@ import time
 A class for detecting human faces in real time using a webcam.
 """
 class FaceDetector:
-    def __init__(self, max_attempts=3, preview=False, delay_seconds=1.0):
+    def __init__(self, max_attempts=3, preview=False, delay_seconds=5.0):
         self.max_attempts = max_attempts
         self.preview = preview
         self.delay_seconds = delay_seconds

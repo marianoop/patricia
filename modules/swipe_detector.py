@@ -7,7 +7,7 @@ import math
 A  calss for detecting left-to-right hand swipes.
 """
 class SwipeDetector:
-    def __init__(self, preview=False, validation_time=30.0, min_displacement=800):
+    def __init__(self, preview=False, validation_time=30.0, min_displacement=600):
         self.preview = preview
         self.validation_time = validation_time
         self.min_displacement = min_displacement
@@ -18,7 +18,7 @@ class SwipeDetector:
         for cnt in contours:
             # Calculate contour area and filter too small ones
             area = cv2.contourArea(cnt)
-            if area < 5000:  # Ignore small contours
+            if area < 8000:  # Ignore small contours
                 continue
 
             hull = cv2.convexHull(cnt)
