@@ -7,18 +7,18 @@ import math
 A  calss for detecting left-to-right hand swipes.
 """
 class SwipeDetector:
-    def __init__(self, preview=False, validation_time=30.0, min_displacement=600):
+    def __init__(self, preview=False, validation_time=30.0, min_displacement=700, min_countour_area=10000):
         self.preview = preview
         self.validation_time = validation_time
         self.min_displacement = min_displacement
+        self.min_countour_area = min_countour_area
         self.position_history = deque()
         self.y_position_history = deque()
 
     def _process_contours(self, contours):
-        for cnt in contours:
-            # Calculate contour area and filter too small ones
+        for cnt in contours: # Calculate contour area and ignore small countours
             area = cv2.contourArea(cnt)
-            if area < 8000:  # Ignore small contours
+            if area < self.min_countour_area:
                 continue
 
             hull = cv2.convexHull(cnt)
@@ -49,24 +49,19 @@ class SwipeDetector:
 
         return None
 
-    def _check_swipe(self):
-        """
-        Validates whether the detected motion represents a valid left-to-right hand swipe.
-        :return: True if swipe is detected, False otherwise.
-        """
+    def _check_swipe(self): # Validates whether the detected motion represents a valid left-to-right hand swipe
         if len(self.position_history) >= 5:
             dx = self.position_history[0] - self.position_history[-1]
             dy = abs(self.y_position_history[0] - self.y_position_history[-1])
 
             if dx > self.min_displacement and dy < self.min_displacement * 0.5:
-                return True  # Valid swipe
+                return True
             elif dx < -self.min_displacement or dy > self.min_displacement * 0.5:
                 self._reset_position_history()  # Invalid motion, reset history
 
         return False
 
-    def _reset_position_history(self):
-        """Clears position history to reset the state after invalid motion."""
+    def _reset_position_history(self): # Clears position history to reset the state after invalid motion
         self.position_history.clear()
         self.y_position_history.clear()
 
@@ -80,15 +75,11 @@ class SwipeDetector:
             x, y, w, h = bbox
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    def detect_swipe(self):
-        """
-        Main method to detect left-to-right hand swipes in the webcam feed.
-        :return: True if a valid swipe is detected, otherwise False.
-        """
+    def detect_swipe(self): # Main method to detect left-to-right hand swipes in the webcam feed.
         cap = cv2.VideoCapture(0)
         ret, prev_frame = cap.read()
         if not ret:
-            print("❌ Failed to read webcam.")
+            print("[Swipe Detector] Failed to read webcam.")
             return False
 
         prev_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)

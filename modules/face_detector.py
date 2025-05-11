@@ -27,7 +27,7 @@ class FaceDetector:
                     time.sleep(self.delay_seconds)
 
                 if found:
-                    print("✅ Face detected.")
+                    print("✅ Face detected")
                     # Clean up the preview if it was enabled
                     if self.preview:
                         cv2.destroyAllWindows()
@@ -42,7 +42,7 @@ class FaceDetector:
     def _open_camera(self): # Open the webcam for capturing video frames
         self.camera = cv2.VideoCapture(0)
         if not self.camera.isOpened():
-            raise RuntimeError("Could not open webcam.")
+            raise RuntimeError("[Face Detector] Error opening webcam.")
 
     def _close_camera(self): # Release the camera resource and destroys any open OpenCV windows
         if self.camera:

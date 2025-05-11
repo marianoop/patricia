@@ -2,7 +2,7 @@ import numpy as np
 import sounddevice as sd
 
 """
-A utility class for generating and playing valid and error sounds using Sounddevice.
+A class for generating and playing valid and error sounds using Sounddevice.
 """
 class TonePlayer:
 
