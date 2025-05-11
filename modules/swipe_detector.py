@@ -4,19 +4,20 @@ import time
 import math
 
 """
-A  calss for detecting left-to-right hand swipes.
+A  class for detecting left-to-right hand swipes.
 """
 class SwipeDetector:
-    def __init__(self, preview=False, validation_time=30.0, min_displacement=700, min_countour_area=10000):
-        self.preview = preview
-        self.validation_time = validation_time
-        self.min_displacement = min_displacement
-        self.min_countour_area = min_countour_area
-        self.position_history = deque()
-        self.y_position_history = deque()
+    def __init__(self, preview=False, validation_time=5.0, max_attempts=3, min_displacement=700, min_countour_area=10000):
+        self.preview = preview  # Show webcam preview with bounding boxes
+        self.validation_time = validation_time  # Time limit per swipe attempt
+        self.max_attempts = max_attempts  # Max swipe attempts allowed
+        self.min_displacement = min_displacement  # Required horizontal movement
+        self.min_countour_area = min_countour_area  # Minimum contour area to consider
+        self.position_history = deque()  # Track x positions of movement
+        self.y_position_history = deque()  # Track y positions for vertical consistency
 
     def _process_contours(self, contours):
-        for cnt in contours: # Calculate contour area and ignore small countours
+        for cnt in contours:  # Calculate contour area and ignore small contours
             area = cv2.contourArea(cnt)
             if area < self.min_countour_area:
                 continue
@@ -34,9 +35,9 @@ class SwipeDetector:
 
             # Determine if the contour likely represents a hand
             is_likely_hand = (
-                    0.3 < solidity < 0.9 and
-                    0.5 < aspect_ratio < 1.5 and
-                    circularity < 0.6
+                0.3 < solidity < 0.9 and
+                0.5 < aspect_ratio < 1.5 and
+                circularity < 0.6
             )
 
             if is_likely_hand:
@@ -49,7 +50,7 @@ class SwipeDetector:
 
         return None
 
-    def _check_swipe(self): # Validates whether the detected motion represents a valid left-to-right hand swipe
+    def _check_swipe(self):  # Validates whether the detected motion represents a valid left-to-right hand swipe
         if len(self.position_history) >= 5:
             dx = self.position_history[0] - self.position_history[-1]
             dy = abs(self.y_position_history[0] - self.y_position_history[-1])
@@ -61,7 +62,7 @@ class SwipeDetector:
 
         return False
 
-    def _reset_position_history(self): # Clears position history to reset the state after invalid motion
+    def _reset_position_history(self):  # Clears position history to reset the state after invalid motion
         self.position_history.clear()
         self.y_position_history.clear()
 
@@ -75,7 +76,7 @@ class SwipeDetector:
             x, y, w, h = bbox
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    def detect_swipe(self): # Main method to detect left-to-right hand swipes in the webcam feed.
+    def detect_swipe(self):  # Main method to detect left-to-right hand swipes in the webcam feed.
         cap = cv2.VideoCapture(0)
         ret, prev_frame = cap.read()
         if not ret:
@@ -89,7 +90,7 @@ class SwipeDetector:
             while True:
                 # Check elapsed time to stop detection
                 if time.time() - start_time > self.validation_time:
-                    return False
+                    return False  # Time limit reached, no valid swipe
 
                 ret, frame = cap.read()
                 if not ret:
@@ -125,3 +126,5 @@ class SwipeDetector:
             cap.release()
             if self.preview:
                 cv2.destroyAllWindows()
+                cv2.waitKey(1)
+                time.sleep(0.1)

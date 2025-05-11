@@ -38,10 +38,24 @@ def main():
 
     # Step 3: Swipe Detection
     audio_player.play("5-Swipe hand.wav")
-    if swipe_detector.detect_swipe():
-        print("✅ Protocol activated")
-    else:
-        print("❌ No swipe detected.")
+    try:
+        for attempt in range(swipe_detector.max_attempts):
+            success = swipe_detector.detect_swipe()
+
+            if success:
+                print("✅ Protocol activated")
+                audio_player.play("6-Initiating power outage.wav")
+                break
+
+            else:
+                if attempt < swipe_detector.max_attempts - 1:
+                    audio_player.play("7-Follow the instructions.wav")  # Only if not the last attempt
+
+        else:
+            audio_player.play("8-Follow the, initiating power outage.wav")
+
+    finally:
+        print("Step 4: Access granted")
 
 if __name__ == "__main__":
     main()
