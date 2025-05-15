@@ -9,15 +9,14 @@ from modules.swipe_detector import SwipeDetector
 
 def main():
     # Setup
-    face_detector = FaceDetector() # Pass preview=True by argument if debbuging is needed
+    face_detector = FaceDetector() # add parameter (preview=True) if debbuging is needed
     soundtrack_player = SoundtrackPlayer()
     validator = BirthdateValidator()
-    swipe_detector = SwipeDetector(preview=True) # Pass preview=True by argument if debbuging is needed
+    swipe_detector = SwipeDetector(preview=True)
     audio_player = AudioPlayer()
 
     # Step 1: Face Detection
     print("[Patricia] Please position yourself in front of the camera...")
-
     for result, is_last_attempt in face_detector.detect():
         if result:
             audio_player.play("1-Welcome.wav")
@@ -42,6 +41,7 @@ def main():
 
     # Step 3: Swipe Detection
     audio_player.play("5-Swipe hand.wav")
+    success = False
     try:
         for attempt in range(swipe_detector.max_attempts):
             success = swipe_detector.detect_swipe()
@@ -53,13 +53,30 @@ def main():
 
             else:
                 if attempt < swipe_detector.max_attempts - 1:
-                    audio_player.play("7-Follow the instructions.wav")  # Only if not the last attempt
-
-        else:
-            audio_player.play("8-Follow the, initiating power outage.wav")
+                    audio_player.play("7-Follow the instructions.wav")
 
     finally:
-        print("Step 4: Access granted")
+        if not success:
+            print("✅ Protocol activated")
+            audio_player.play("8-Follow the, initiating power outage.wav")
+
+    # Step 4: Grant Access
+    soundtrack_player.stop()
+    soundtrack_player.play("Soundtrack5.wav")
+    print("[Patricia] Incoming call...")
+    user_response = input("[Patricia] Grant access? (Y/N): ")
+
+    soundtrack_player.stop()
+    audio_player.play("9-Warning.wav")
+
+    if user_response.upper() == "Y":
+        soundtrack_player.play("Soundtrack6Y.wav")
+    else:
+        soundtrack_player.play("Soundtrack6N.wav")
+
+    # Step 5: Thank you
+    audio_player.play("10-Thank you.wav")
+    audio_player.play("Farewell song.wav")
 
 if __name__ == "__main__":
     main()
