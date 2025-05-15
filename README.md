@@ -20,18 +20,14 @@ Next, open your Terminal (on macOS/Linux) or Command Prompt/PowerShell (on Windo
 It's recommended to use a Python virtual environment for this project to isolate its dependencies. Python 3.13 comes with the built-in venv module to create virtual environments.
 1. Create the virtual environment: 
 Run the following command in the project directory:
-
 ```python3.13 -m venv .venv```
 2. Use one of the following commands based on your operating system:
 
-#### macOS/Linux:
-```source .venv/bin/activate```
+#### macOS/Linux: ```source .venv/bin/activate```
 
-#### Windows (Command Prompt):
-```.venv\Scripts\activate.bat```
+#### Windows (Command Prompt): ```.venv\Scripts\activate.bat```
 
-#### Windows (PowerShell):
-```.\venv\Scripts\Activate.ps1```
+#### Windows (PowerShell): ```.\venv\Scripts\Activate.ps1```
 
 After activation, your command prompt should change to include (.venv), indicating the virtual environment is active. All Python commands will now use this isolated Python 3.13 environment.
 
@@ -43,7 +39,7 @@ With the virtual environment activated, install the project’s required Python 
 
 If you see a warning about pip being out of date, you can upgrade it by running: 
 
-```python -m pip install --upgrade pip.```
+```python -m pip install --upgrade pip```
 
 ### Step 5: Run the Application
 
