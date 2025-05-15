@@ -1,2 +1,14 @@
-# Ignore the Python virtual environment folder
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS
+.DS_Store
+
+# IDEs
+.idea/
+
+# Environments
 .venv/
+.env/
