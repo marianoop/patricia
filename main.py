@@ -1,4 +1,5 @@
 import sys
+import time
 
 from modules.soundtrack_player import SoundtrackPlayer
 from modules.face_detector import FaceDetector
@@ -6,9 +7,8 @@ from modules.audio_prompter import AudioPlayer
 from modules.birthdate_validator import BirthdateValidator
 from modules.swipe_detector import SwipeDetector
 
-
 def main():
-    # Setup
+    # Initial Setup
     face_detector = FaceDetector() # add parameter (preview=True) if debbuging is needed
     soundtrack_player = SoundtrackPlayer()
     validator = BirthdateValidator()
@@ -63,16 +63,30 @@ def main():
     # Step 4: Grant Access
     soundtrack_player.stop()
     soundtrack_player.play("Soundtrack5.wav")
+
+    seconds_to_incoming_call = 2
+    seconds_to_ask_request = 25
+
+    time.sleep(seconds_to_incoming_call)
     print("[Patricia] Incoming call...")
-    user_response = input("[Patricia] Grant access? (Y/N): ")
+
+    time.sleep(seconds_to_ask_request)
+
+    while True:
+        user_response = input("[Patricia] Grant access? (Y/N): ").strip()
+
+        if user_response.upper() in ["Y", "N"]:
+            break
+        else:
+            print("❌ Invalid input")
 
     soundtrack_player.stop()
     audio_player.play("9-Warning.wav")
 
     if user_response.upper() == "Y":
-        soundtrack_player.play("Soundtrack6Y.wav")
+        soundtrack_player.play_and_wait("Soundtrack6Y.wav")
     else:
-        soundtrack_player.play("Soundtrack6N.wav")
+        soundtrack_player.play_and_wait("Soundtrack6N.wav")
 
     # Step 5: Thank you
     audio_player.play("10-Thank you.wav")
