@@ -31,11 +31,21 @@ class FaceDetector:
                     # Clean up the preview if it was enabled
                     if self.preview:
                         cv2.destroyAllWindows()
-                    return True
+                    yield True, False
+                    return
 
-                print(f"❌ No face detected. Attempt {attempt + 1}/{self.max_attempts}")
+                # Calculate remaining attempts
+                remaining_attempts = self.max_attempts - attempt - 1
+                if remaining_attempts > 0:
+                    print(f"❌ No face detected. {remaining_attempts} attempt(s) left")
+                    yield False, False
+                else:
+                    print("❌ No face detected. No attempts left")
+                    yield False, True
+                    return
+
                 time.sleep(self.delay_seconds)
-            return False
+
         finally:
             self._close_camera()
 

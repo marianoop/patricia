@@ -1,5 +1,6 @@
+import sys
+
 from modules.soundtrack_player import SoundtrackPlayer
-from modules.state_manager import StateManager
 from modules.face_detector import FaceDetector
 from modules.audio_prompter import AudioPlayer
 from modules.birthdate_validator import BirthdateValidator
@@ -8,7 +9,6 @@ from modules.swipe_detector import SwipeDetector
 
 def main():
     # Setup
-    state = StateManager()
     face_detector = FaceDetector() # Pass preview=True by argument if debbuging is needed
     soundtrack_player = SoundtrackPlayer()
     validator = BirthdateValidator()
@@ -17,15 +17,19 @@ def main():
 
     # Step 1: Face Detection
     print("[Patricia] Please position yourself in front of the camera...")
-    if face_detector.detect():
-        audio_player.play("1-Welcome.wav")
-        soundtrack_player.play("Soundtrack1.wav")
-        state.face_detected = True
-    else:
-        print("Access denied")
-        return
+
+    for result, is_last_attempt in face_detector.detect():
+        if result:
+            audio_player.play("1-Welcome.wav")
+            soundtrack_player.play("Soundtrack1.wav")
+            break
+        else:
+            audio_player.play("3-Access denied.wav")
+            if is_last_attempt:
+                sys.exit("⛔ ACCESS PERMANENTLY DENIED ⛔")
 
     # Step 2: Ask for Birthdate
+    audio_player.play("2-Enter birthdate.wav")
     while True:
         birthdate = input("[Patricia] Please, enter your birthdate (DD/MM/YYYY): ")
         if validator.validate(birthdate):
